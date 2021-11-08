@@ -1,6 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <errno.h>
 #include "db.h"
 
 char *db_streror(int errnum)
@@ -43,7 +40,7 @@ void db_set(int key, int value)
 {
     if(database.current_size < database.size)
 	{
-	  database.data[database.current_size].key = key;
+	  database.data[database.current_size].key   = key;
 	  database.data[database.current_size].value = value;
 	  database.current_size ++;
 	}else
@@ -75,10 +72,13 @@ void db_update(int key, int value)
 
 void db_delete(int key)
 {
+	int isFind = 0;
+	
     for(int i = 0; i < database.current_size; i++)
     {
       if(database.data[i].key == key)
 	  {
+		isFind = 1;
 	    while(database.current_size >= 1 && database.data[database.current_size - 1].key == key){
 			database.current_size -= 1;
 		}
@@ -88,7 +88,7 @@ void db_delete(int key)
 	  }
     }
 	
-	errno = 2;
+	if(isFind) errno = 2;
 }
 
 void db_delete2(int key)
@@ -99,7 +99,7 @@ void db_delete2(int key)
 	{
 		if(database.data[pos].key != key)
 		{
-			database.data[sorted].key = database.data[pos].key;
+			database.data[sorted].key   = database.data[pos].key;
 			database.data[sorted].value = database.data[pos].value;
 			sorted ++;
 		}
@@ -108,6 +108,33 @@ void db_delete2(int key)
 	database.current_size = sorted;
 	
 	if(sorted == database.current_size) errno = 2;
+}
+
+void db_delete3(int key)
+{
+	KVNode *data = (KVNode *)malloc(sizeof(KVNode) * database.current_size);
+	int empty = 0;
+		
+	for(int i = 0; i < database.current_size; i++)
+	{
+		if(database.data[i].key != key)
+		{
+			data[empty].key   = database.data[i].key;
+			data[empty].value = database.data[i].value;
+			
+			empty += 1;
+		}
+	}
+	
+	if(empty < database.current_size)
+	{
+		free(database.data);
+		database.data = data;
+		database.current_size = empty;
+	}else
+	{
+		errno = 2;
+	}
 }
 
 void db_free()

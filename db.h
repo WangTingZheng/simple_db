@@ -1,6 +1,10 @@
 #ifndef __DB_H
 #define __DB_H
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+
 typedef struct KVNODE KVNode;
 typedef struct DATABASE Database;
 
@@ -26,6 +30,7 @@ int  db_get(int key);
 void db_update(int key, int value);
 void db_delete(int key);
 void db_delete2(int key);
+void db_delete3(int key);
 void db_free();
 
 #endif

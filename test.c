@@ -1,62 +1,42 @@
-#include "db.h"
+#include "test.h"
 
-void test_init(int size)
+long test_delete(void (*f_delete)(int), DInfo dinfo)
 {
-	db_init(size);
-}
-
-int test_register(int username, int password)
-{
-	db_cerror();
-	db_get(username);
-	if(errno)
-	{
-		db_set(username, password);
-		return 1;
-	}else return 0;
-}
-
-int test_login(int username, int password)
-{
-	db_cerror();
-	int password_g = db_get(username);
-	if(errno) return 0;
-	else
-	{
-		if(password_g == password) return 1;
-		return 0;
-	}
-}
-
-int test_change(int username, int password)
-{
-	db_cerror();
-	db_get(username);
+	char **path  = dinfo.path;
+	int path_num = dinfo.path_num;
+	int int_num  = dinfo.int_num;
+	int int_max  = dinfo.int_max;
+	int dup_key  = dinfo.dup_key;
 	
-	if(errno)
+	struct timeval start,end;  
+	Line *line = readline_merge_path(path, path_num);
+	int key = 0;
+	
+
+	db_init(line->real_size);
+
+	for(int i = 0; i < int_num; i++)
 	{
-		db_update(username, password);
-		return 1;
+		key = readline_getInt(line, i);
+		if(int_max > 0) key %= int_max;
+		db_set(key, key);
 	}
 	
-	return 0;
-}
+	gettimeofday(&start, NULL);  
+	f_delete(dup_key);
+	gettimeofday(&end, NULL);  
 
-int test_logout(int username, int password)
-{
-	db_cerror();
-	db_get(username);
+	long timeuse = 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec; 
 	
-	if(errno)
+	db_cerror();
+	db_get(dup_key);
+	if(!errno)
 	{
-		db_delete(username);
-		return 1;
+		printf("Still has %d not be delete!\n", dup_key);
+		return -1;
 	}
 	
-	return 0;
-}
-
-void test_exit()
-{
 	db_free();
+
+	return timeuse;
 }
