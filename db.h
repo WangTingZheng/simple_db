@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <errno.h>
+#include "error.h"
 
 typedef struct KVNODE KVNode;
 typedef struct DATABASE Database;
@@ -20,9 +20,6 @@ struct DATABASE{
 };
 
 Database database;
-
-void db_perror();
-void db_cerror();
 
 void db_init(int size);
 void db_set(int key, int value);

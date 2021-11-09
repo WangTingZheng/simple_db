@@ -7,14 +7,12 @@
 #include <stdio.h>
 
 #include "db.h"
-#include "readint.h"
+#include "random.h"
 
 typedef struct DINFO DInfo;
 
 struct DINFO
 {
-  char **path;
-  int path_num;
   int int_num;
   int int_max;
   int dup_key;

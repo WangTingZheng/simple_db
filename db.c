@@ -1,33 +1,5 @@
 #include "db.h"
 
-char *db_streror(int errnum)
-{
-  switch(errnum)
-  {
-	case 1:
-	{
-		return "execute failed, array is full.\n";
-	}
-	
-	case 2:
-	{
-		return "execute failed, data not in the array.\n";
-	}
-	
-	default: return "";
-  }
-}
-
-void db_perror()
-{
-	printf("%s", db_streror(errno));
-}
-
-void db_cerror()
-{
-	errno = 0;
-}
-
 void db_init(int size)
 {
   database.data = (KVNode *)malloc(sizeof(KVNode) * size);

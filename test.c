@@ -1,23 +1,22 @@
 #include "test.h"
 
+
 long test_delete(void (*f_delete)(int), DInfo dinfo)
 {
-	char **path  = dinfo.path;
-	int path_num = dinfo.path_num;
 	int int_num  = dinfo.int_num;
 	int int_max  = dinfo.int_max;
 	int dup_key  = dinfo.dup_key;
 	
 	struct timeval start,end;  
-	Line *line = readline_merge_path(path, path_num);
+	Line *line = random_initLine(int_num);
 	int key = 0;
 	
 
-	db_init(line->real_size);
+	db_init(line->size);
 
 	for(int i = 0; i < int_num; i++)
 	{
-		key = readline_getInt(line, i);
+		key = random_getInt(line, i);
 		if(int_max > 0) key %= int_max;
 		db_set(key, key);
 	}
